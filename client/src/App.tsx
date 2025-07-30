@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, ChangeEvent, FC } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -10,29 +10,29 @@ type Item = {
   lastUpdated: Date;
 }
 
-function App() {
+const App: FC = () => {
   const [items, setItems] = useState<Item[]>([]);
-  const [name, setName] = useState('');
-  const [quantity, setQuantity] = useState(0);
+  const [name, setName] = useState<string>('');
+  const [quantity, setQuantity] = useState<number>(0);
   const [error, setError] = useState<string>(''); // Fix: define setError
 
   // For pretty delete confirmation modal
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [deleteModalMessage, setDeleteModalMessage] = useState<string>("");
 
-  const fetchItems = async () => {
+  const fetchItems = async (): Promise<void> => {
     fetch('/items')
-      .then(res => res.json())
-      .then(setItems);
+      .then((res: Response) => res.json())
+      .then((data: Item[]) => setItems(data));
   };
 
-  useEffect(() => {
+  useEffect((): void => {
     fetchItems();
   }, []);
 
-  const handleAddItem = async () => {
-    const response = await fetch('/items', {
+  const handleAddItem = async (): Promise<void> => {
+    const response: Response = await fetch('/items', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, quantity }),
@@ -49,19 +49,19 @@ function App() {
     }
   };
 
-  const deleteItem = async (id: string) => {
+  const deleteItem = async (id: string): Promise<void> => {
     await fetch(`/items/${id}`, { method: 'DELETE' });
-    setItems(items.filter(item => item.id !== id));
+    setItems(items.filter((item: Item) => item.id !== id));
   };
 
   // Show pretty modal for delete confirmation
-  const confirmDelete = (id: string, message: string) => {
+  const confirmDelete = (id: string, message: string): void => {
     setDeleteTargetId(id);
     setDeleteModalMessage(message);
     setShowDeleteModal(true);
   };
 
-  const handleUpdateItem = async (id: string, quantity: number) => {
+  const handleUpdateItem = async (id: string, quantity: number): Promise<void> => {
     if (quantity <= 0) {
       confirmDelete(id, "Quantity is zero or less. Do you want to delete this item?");
       return;
