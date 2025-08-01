@@ -12,7 +12,8 @@
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "@shared/types": "workspace:*"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
